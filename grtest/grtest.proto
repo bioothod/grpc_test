@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message Ping {
+	string	ping = 1;
+	string	aux = 2;
+}
+
+message Pong {
+	string pong = 1;
+	string aux = 2;
+}
+
+service TestService {
+	rpc PingRequest(Ping) returns (Pong);
+	rpc Stream(Ping) returns (stream Pong);
+}
