@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"flag"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -55,10 +56,12 @@ func (ts *server) Stream(req *pb.Ping, stream pb.TestService_StreamServer) error
 }
 
 func main() {
-	addr := "localhost:12345"
-	lis, err := net.Listen("tcp", addr)
+	listen := flag.String("listen", "localhost:12345", "Address to listen at")
+	flag.Parse()
+
+	lis, err := net.Listen("tcp", *listen)
 	if err != nil {
-		log.Fatalf("Could not start listening at %s: %v\n", addr, err)
+		log.Fatalf("Could not start listening at %s: %v\n", *listen, err)
 	}
 
 	ts := &server {
@@ -68,6 +71,6 @@ func main() {
 	srv := grpc.NewServer()
 	pb.RegisterTestServiceServer(srv, ts)
 	reflection.Register(srv)
-	log.Printf("Starting to listen at %s\n", addr)
+	log.Printf("Starting to listen at %s\n", *listen)
 	srv.Serve(lis)
 }
